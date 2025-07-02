@@ -78,39 +78,4 @@ func ScanHost() (string, error) {
 	}
 	return "", fmt.Errorf("host %s did not respond to ping", resolvedIP)
 
-	// func PingAndResolve (addr Addr) (string, error){
-	// 	pinger, err := probing.NewPinger(hostInput)
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("DNS lookup failed for %s: %v", hostInput, err)
-	// 	}
-
-	// 	pinger, err := probing.NewPinger(resolvedIP)
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("failed to create pinger: %v", err)
-	// 	}
-	// 	pinger.Count = 3
-	// 	pinger.Timeout = 3 * time.Second
-	// 	pinger.SetPrivileged(true)
-
-	// 	fmt.Printf("Pinging %s (%s)...\n", addr.IP, &resolvedIP)
-	// 	err = pinger.Run()
-	// 	if err != nil {
-	// 		return "", fmt.Errorf("ping error: %v", err)
-	// 	}
-	// 	stats := pinger.Statistics()
-	// 	if stats.PacketsRecv > 0 {
-	// 		fmt.Printf("Host %s is reachable at IP %s\n", addr.IP, resolvedIP)
-	// 		return resolvedIP, nil
-	// 	}
-
-	// 	return "", fmt.Errorf("host %s did not respond to ping", resolvedIP)
 }
-
-// func GetIPAddress(){
-// 	currentIP, err := net.Addr()
-// 	if err != nil{
-// 		fmt.Println("Error getting IP address:", err)
-// 	}
-// 	fmt.Println("Current IP Address:", currentIP.IP)
-
-// }
