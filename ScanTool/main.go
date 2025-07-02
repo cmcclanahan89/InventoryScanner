@@ -9,4 +9,5 @@ func main() {
 	fmt.Println("Scan Tool starting...")
 	scan.CoreCount()
 	scan.PrintRAM()
+	scan.ScanHost()
 }
