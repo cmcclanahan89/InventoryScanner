@@ -7,7 +7,8 @@ import (
 
 func main() {
 	fmt.Println("Scan Tool starting...")
+	scan.GetHostname()
 	scan.CoreCount()
 	scan.PrintRAM()
-	scan.ScanHost()
+	scan.GetHostIP()
 }

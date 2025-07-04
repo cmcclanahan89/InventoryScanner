@@ -1,17 +1,22 @@
 package scan
 
 import (
-	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"os"
-	"strings"
-	"time"
 
-	probing "github.com/prometheus-community/pro-bing"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/mem"
 )
+
+func GetHostname() {
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Hostname:", hostname)
+}
 
 func CoreCount() {
 	logicalCores, err := cpu.Counts(true)
@@ -38,44 +43,58 @@ func PrintRAM() {
 	fmt.Println("RAM Amount:", int64(ramAmount.Total)/(1<<30))
 }
 
-func ScanHost() (string, error) {
-	// 1) Prompt for the hostname
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter hostname to ping: ")
-	hostInput, err := reader.ReadString('\n')
+func GetHostIP() net.IP {
+
+	hostIP, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		return "", fmt.Errorf("failed to read input: %v", err)
+		fmt.Println("Error getting IP Address:", err)
 	}
-	hostInput = strings.TrimSpace(hostInput)
+	defer hostIP.Close()
 
-	// 2) Resolve DNS name
-	ips, err := net.LookupIP(hostInput)
-	if err != nil {
-		return "", fmt.Errorf("DNS lookup failed for %q: %v", hostInput, err)
-	}
-	resolvedIP := ips[0].String()
-
-	// 3) Set up the pinger
-	pinger, err := probing.NewPinger(resolvedIP)
-	if err != nil {
-		return "", fmt.Errorf("failed to create pinger for %s: %v", resolvedIP, err)
-	}
-	pinger.Count = 3
-	pinger.Timeout = 5 * time.Second
-	pinger.SetPrivileged(true) // Windows: run as Administrator
-
-	// 4) Run the ping
-	fmt.Printf("Pinging %s (%s)...\n", hostInput, resolvedIP)
-	if err := pinger.Run(); err != nil {
-		return "", fmt.Errorf("ping error: %v", err)
-	}
-	stats := pinger.Statistics()
-
-	// 5) Check and return
-	if stats.PacketsRecv > 0 {
-		fmt.Printf("Host %s is reachable at IP %s\n", hostInput, resolvedIP)
-		return resolvedIP, nil
-	}
-	return "", fmt.Errorf("host %s did not respond to ping", resolvedIP)
+	localAddress := hostIP.LocalAddr().(*net.UDPAddr)
+	fmt.Println("IP Address:", localAddress.IP)
+	return localAddress.IP
 
 }
+
+// func ScanHost() (string, error) {
+// 	// 1) Prompt for the hostname
+// 	reader := bufio.NewReader(os.Stdin)
+// 	fmt.Print("Enter hostname to ping: ")
+// 	hostInput, err := reader.ReadString('\n')
+// 	if err != nil {
+// 		return "", fmt.Errorf("failed to read input: %v", err)
+// 	}
+// 	hostInput = strings.TrimSpace(hostInput)
+
+// 	// 2) Resolve DNS name
+// 	ips, err := net.LookupIP(hostInput)
+// 	if err != nil {
+// 		return "", fmt.Errorf("DNS lookup failed for %q: %v", hostInput, err)
+// 	}
+// 	resolvedIP := ips[0].String()
+
+// 	// 3) Set up the pinger
+// 	pinger, err := probing.NewPinger(resolvedIP)
+// 	if err != nil {
+// 		return "", fmt.Errorf("failed to create pinger for %s: %v", resolvedIP, err)
+// 	}
+// 	pinger.Count = 3
+// 	pinger.Timeout = 5 * time.Second
+// 	pinger.SetPrivileged(true) // Windows: run as Administrator
+
+// 	// 4) Run the ping
+// 	fmt.Printf("Pinging %s (%s)...\n", hostInput, resolvedIP)
+// 	if err := pinger.Run(); err != nil {
+// 		return "", fmt.Errorf("ping error: %v", err)
+// 	}
+// 	stats := pinger.Statistics()
+
+// 	// 5) Check and return
+// 	if stats.PacketsRecv > 0 {
+// 		fmt.Printf("Host %s is reachable at IP %s\n", hostInput, resolvedIP)
+// 		return resolvedIP, nil
+// 	}
+// 	return "", fmt.Errorf("host %s did not respond to ping", resolvedIP)
+
+// }
