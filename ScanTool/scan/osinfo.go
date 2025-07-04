@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/mem"
@@ -16,6 +18,40 @@ func GetHostname() {
 		log.Fatal(err)
 	}
 	fmt.Println("Hostname:", hostname)
+}
+
+func IsVirtual() (bool, error) {
+	// Check for virtualization keywords in system product name.
+	cmd := exec.Command("powershell",
+		"-NoProfile", "-Command",
+		`if((Get-WmiObject -Class Win32_ComputerSystem).Model -match '*Dell*') { exit 0 } else { exit 1 }`,
+	)
+	err := cmd.Run()
+	if err == nil {
+		// PowerShell exited 0 → virtualization detected
+		return true, nil
+	}
+	fmt.Println("Virtual")
+
+	// If it’s a non-zero exit code, see whether it’s exactly 1 (physical).
+	if exitErr, ok := err.(*exec.ExitError); ok && exitErr.ExitCode() == 1 {
+		return false, nil // bare-metal
+	}
+	fmt.Println("Physical")
+
+	// Any other error means the command itself failed.
+	return false, fmt.Errorf("failed to execute powershell: %w", err)
+}
+
+func HostOS() {
+	cmd := exec.Command("powershell",
+		"-NoProfile", "-Command", `Get-CimInstance Win32_Operatingsystem | Select-Object -expand Caption`)
+
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Println(strings.Trim(string(output), "\r\n"))
 }
 
 func CoreCount() {
