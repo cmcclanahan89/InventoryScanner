@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"scantool/scan"
+	collector "scantool/scan"
 )
 
 func main() {
 	fmt.Println("Scan Tool starting...")
-	scan.GetHostname()
-	scan.IsVirtual()
-	scan.HostOS()
-	scan.CoreCount()
-	scan.PrintRAM()
-	scan.GetHostIP()
+	collector.GetHostname()
+	collector.IsVirtual()
+	collector.HostOS()
+	collector.CoreCount()
+	collector.PrintRAM()
+	collector.GetHostIP()
 }

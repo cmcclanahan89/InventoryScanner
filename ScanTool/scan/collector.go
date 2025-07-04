@@ -1,4 +1,4 @@
-package scan
+package collector
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func GetHostname() {
 }
 
 func IsVirtual() (bool, error) {
-	// Check for virtualization keywords in system product name.
+	// Check for Dell keyword in system model name. All physical hardware is Dell.
 	cmd := exec.Command("powershell",
 		"-NoProfile", "-Command",
 		`if((Get-WmiObject -Class Win32_ComputerSystem).Model -match '*Dell*') { exit 0 } else { exit 1 }`,
