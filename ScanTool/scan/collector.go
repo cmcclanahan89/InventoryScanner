@@ -43,9 +43,6 @@ func Collect() (MachineScan, error) {
 	ms.PhysicalCores = physicalCores
 
 	ip := GetHostIP()
-	// if err != nil {
-	// 	return ms, err
-	// }
 	ms.IPAddress = ip.String() // convert net.IP to string
 
 	return ms, nil
