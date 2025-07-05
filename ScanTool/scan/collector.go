@@ -45,5 +45,11 @@ func Collect() (MachineScan, error) {
 	ip := GetHostIP()
 	ms.IPAddress = ip.String() // convert net.IP to string
 
+	adminUsers, err := GetLocalAdminUsers()
+	if err != nil {
+		return ms, fmt.Errorf("failed to collect local admin users: %w", err)
+	}
+	ms.AdminUsers = adminUsers
+
 	return ms, nil
 }

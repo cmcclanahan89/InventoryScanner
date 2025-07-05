@@ -27,13 +27,11 @@ func IsVirtual() (string, error) {
 		// PowerShell exited 0 → virtualization detected
 		return "Virtual", nil
 	}
-	//fmt.Println("Virtual")
 
 	// If it’s a non-zero exit code, see whether it’s exactly 1 (physical).
 	if exitErr, ok := err.(*exec.ExitError); ok && exitErr.ExitCode() == 1 {
 		return "Physical", nil // bare-metal
 	}
-	// fmt.Println("Physical")
 
 	// Any other error means the command itself failed.
 	return "", fmt.Errorf("failed to execute powershell: %w", err)
@@ -49,6 +47,7 @@ func HostOS() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
+// CoreCount returns (logicalCores, physicalCores, error) in that order.
 func CoreCount() (int, int, error) {
 	logicalCores, err := cpu.Counts(true)
 	if err != nil {
@@ -74,12 +73,30 @@ func GetHostIP() net.IP {
 
 	hostIP, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		fmt.Println("Error getting IP Address:", err)
+		log.Fatal(err)
 	}
 	defer hostIP.Close()
 
 	localAddress := hostIP.LocalAddr().(*net.UDPAddr)
-	fmt.Println("IP Address:", localAddress.IP)
+	// fmt.Println("IP Address:", localAddress.IP)
 	return localAddress.IP
 
+}
+
+// GetLocalAdminUsers returns a list of local admin users on the machine.
+func GetLocalAdminUsers() ([]string, error) {
+	cmd := exec.Command("powershell", "-NoProfile", "-Command",
+		`Get-LocalGroupMember -Group "Administrators" | Select-Object -ExpandProperty Name`,
+	)
+
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get local admin users: %w", err)
+	}
+
+	users := strings.Split(strings.TrimSpace(string(output)), "\n")
+	for i, user := range users {
+		users[i] = strings.TrimSpace(user) // Clean up whitespace
+	}
+	return users, nil
 }

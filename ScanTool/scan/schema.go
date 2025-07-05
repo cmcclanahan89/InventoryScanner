@@ -15,6 +15,7 @@ type MachineScan struct {
 	Memory        string      `json:"memory"`
 	Disks         []DiskStats `json:"disks,omitempty"` // omit if empty
 	IPAddress     string      `json:"IP Address,omitempty"`
+	AdminUsers    []string    `json:"admin_users,omitempty"` // local admin users, if any
 }
 
 type DiskStats struct {

@@ -22,9 +22,4 @@ func main() {
 	fmt.Println(string(jsonBytes))
 }
 
-// scan.GetHostname()
-// scan.IsVirtual()
-// scan.HostOS()
-// scan.CoreCount()
-// scan.PrintRAM()
-// scan.GetHostIP()
+// The above code collects machine scan data and prints it in JSON format.
