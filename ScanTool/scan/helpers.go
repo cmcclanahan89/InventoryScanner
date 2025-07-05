@@ -49,20 +49,16 @@ func HostOS() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func CoreCount() {
+func CoreCount() (int, int, error) {
 	logicalCores, err := cpu.Counts(true)
 	if err != nil {
-		fmt.Println("Error getting logical cores:", err)
-		return
+		return 0, 0, err
 	}
-	fmt.Println("Logical CPU Cores:", logicalCores)
-
 	physicalCores, err := cpu.Counts(false)
 	if err != nil {
-		fmt.Println("Error getting physical cores:", err)
-		return
+		return 0, 0, err
 	}
-	fmt.Println("Phsycial CPU Cores:", physicalCores)
+	return logicalCores, physicalCores, nil
 }
 
 func GetRam() uint64 {

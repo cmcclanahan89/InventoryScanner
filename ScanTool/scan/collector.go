@@ -1,9 +1,13 @@
 package scan
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 func Collect() (MachineScan, error) {
 	var ms MachineScan
+
 	// Initialize the MachineScan struct
 
 	ms.SchemaVersion = "1.0"          // initial version, bump when the shape changes
@@ -29,7 +33,20 @@ func Collect() (MachineScan, error) {
 	ms.OS = os
 
 	ram := GetRam()
-	ms.Memory = ram
+	ms.Memory = fmt.Sprintf("%d GB", ram)
+
+	logicalCores, physicalCores, err := CoreCount()
+	if err != nil {
+		return ms, err
+	}
+	ms.LogicalCores = logicalCores
+	ms.PhysicalCores = physicalCores
+
+	ip := GetHostIP()
+	// if err != nil {
+	// 	return ms, err
+	// }
+	ms.IPAddress = ip.String() // convert net.IP to string
 
 	return ms, nil
 }
