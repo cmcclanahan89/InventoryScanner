@@ -1,16 +1,30 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	collector "scantool/scan"
+	"log"
+	"scantool/scan"
 )
 
 func main() {
 	fmt.Println("Scan Tool starting...")
-	collector.GetHostname()
-	collector.IsVirtual()
-	collector.HostOS()
-	collector.CoreCount()
-	collector.PrintRAM()
-	collector.GetHostIP()
+
+	ms, err := scan.Collect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jsonBytes, err := json.MarshalIndent(ms, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(jsonBytes))
 }
+
+// scan.GetHostname()
+// scan.IsVirtual()
+// scan.HostOS()
+// scan.CoreCount()
+// scan.PrintRAM()
+// scan.GetHostIP()
