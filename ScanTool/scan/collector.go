@@ -4,7 +4,7 @@ import "time"
 
 func Collect() (MachineScan, error) {
 	var ms MachineScan
-	var memorystats MemoryStats
+	// Initialize the MachineScan struct
 
 	ms.SchemaVersion = "1.0"          // initial version, bump when the shape changes
 	ms.CollectedAt = time.Now().UTC() // set the timestamp
