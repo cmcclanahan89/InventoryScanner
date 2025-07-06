@@ -1,0 +1,13 @@
+# Ignore database files
+scans.db
+*.db
+*.db-journal
+*.db-wal
+
+# Ignore all executables
+*.exe
+
+# Editor and OS files (optional but common)
+.DS_Store
+.idea/
+.vscode/
