@@ -36,11 +36,6 @@ func main() {
 		}
 	}
 
-	// SaveScanErr := scan.InsertScan(ms)
-	// if SaveScanErr != nil {
-	// 	log.Fatalf("Failed to save scan data: %v", SaveScanErr)
-	// }
-
 }
 
 // The above code collects machine scan data and prints it in JSON format.
