@@ -13,13 +13,14 @@ func Collect() (MachineScan, error) {
 	ms.SchemaVersion = "1.0"          // initial version, bump when the shape changes
 	ms.CollectedAt = time.Now().UTC() // set the timestamp
 
-	h, err := GetHostname() // call the helper
+	// collect hostname, OS, architecture, memory, CPU cores, IP address, and local admin users
+	// and populate the MachineScan struct
+	h, err := GetHostname()
 	if err != nil {
-		return ms, err // bubble the problem up
+		return ms, err
 	}
-	ms.Hostname = h // fill the struct field
+	ms.Hostname = h
 
-	// ... collect other fields ...
 	v, err := IsVirtual()
 	if err != nil {
 		return ms, err
@@ -33,7 +34,7 @@ func Collect() (MachineScan, error) {
 	ms.OS = os
 
 	ram := GetRam()
-	ms.Memory = fmt.Sprintf("%d GB", ram)
+	ms.Memory = fmt.Sprintf("%d GiB", ram)
 
 	logicalCores, physicalCores, err := CoreCount()
 	if err != nil {

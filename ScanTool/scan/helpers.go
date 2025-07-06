@@ -37,6 +37,9 @@ func IsVirtual() (string, error) {
 	return "", fmt.Errorf("failed to execute powershell: %w", err)
 }
 
+// HostOS retrieves the name of the host operating system by executing a PowerShell command.
+// It returns the OS name as a string and an error if the command execution fails.
+// Note: This function is intended for use on Windows systems.
 func HostOS() (string, error) {
 	cmd := exec.Command("powershell", "-NoProfile", "-Command", `Get-CimInstance Win32_Operatingsystem | Select-Object -expand Caption`)
 
@@ -48,6 +51,9 @@ func HostOS() (string, error) {
 }
 
 // CoreCount returns (logicalCores, physicalCores, error) in that order.
+// CoreCount returns the number of logical and physical CPU cores on the system.
+// It returns the logical core count, physical core count, and an error if any occurred
+// during the retrieval of core counts.
 func CoreCount() (int, int, error) {
 	logicalCores, err := cpu.Counts(true)
 	if err != nil {
@@ -60,6 +66,10 @@ func CoreCount() (int, int, error) {
 	return logicalCores, physicalCores, nil
 }
 
+// GetRam retrieves the total amount of system RAM in GiB (Gibibytes).
+// It uses the mem.VirtualMemory function to obtain memory statistics.
+// If an error occurs while fetching the memory information, the function logs the error and terminates the program.
+// Returns the total RAM as a uint64 value representing GiB.
 func GetRam() uint64 {
 
 	ramAmount, err := mem.VirtualMemory()
@@ -83,7 +93,9 @@ func GetHostIP() net.IP {
 
 }
 
-// GetLocalAdminUsers returns a list of local admin users on the machine.
+// GetLocalAdminUsers retrieves the list of local administrator user names on the current Windows machine.
+// It executes a PowerShell command to query the "Administrators" group and returns the names as a slice of strings.
+// Returns an error if the command fails or cannot be executed.
 func GetLocalAdminUsers() ([]string, error) {
 	cmd := exec.Command("powershell", "-NoProfile", "-Command",
 		`Get-LocalGroupMember -Group "Administrators" | Select-Object -ExpandProperty Name`,

@@ -12,7 +12,7 @@ type MachineScan struct {
 	Arch          string      `json:"arch"`
 	LogicalCores  int         `json:"logical_cores"`  // logical CPU cores
 	PhysicalCores int         `json:"physical_cores"` // physical CPU cores
-	Memory        string      `json:"memory"`
+	Memory        string      `json:"RAM"`
 	Disks         []DiskStats `json:"disks,omitempty"` // omit if empty
 	IPAddress     string      `json:"IP Address,omitempty"`
 	AdminUsers    []string    `json:"admin_users,omitempty"` // local admin users, if any

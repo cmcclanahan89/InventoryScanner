@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"scantool/scan"
@@ -10,16 +9,21 @@ import (
 func main() {
 	fmt.Println("Scan Tool starting...")
 
-	ms, err := scan.Collect()
-	if err != nil {
-		log.Fatal(err)
+	initDBErr := scan.InitDB()
+	if initDBErr != nil {
+		log.Fatalf("Failed to initialize database: %v", initDBErr)
 	}
 
-	jsonBytes, err := json.MarshalIndent(ms, "", "  ")
+	ms, err := scan.Collect()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to collect Data: %v", err)
 	}
-	fmt.Println(string(jsonBytes))
+
+	SaveScanErr := scan.SaveScan(ms)
+	if SaveScanErr != nil {
+		log.Fatalf("Failed to save scan data: %v", SaveScanErr)
+	}
+
 }
 
 // The above code collects machine scan data and prints it in JSON format.

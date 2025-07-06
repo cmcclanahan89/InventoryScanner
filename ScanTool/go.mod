@@ -2,7 +2,10 @@ module scantool
 
 go 1.24.4
 
-require github.com/shirou/gopsutil/v4 v4.25.5
+require (
+	github.com/mattn/go-sqlite3 v1.14.28
+	github.com/shirou/gopsutil/v4 v4.25.5
+)
 
 require (
 	github.com/ebitengine/purego v0.8.4 // indirect
