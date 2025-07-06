@@ -19,10 +19,27 @@ func main() {
 		log.Fatalf("Failed to collect Data: %v", err)
 	}
 
-	SaveScanErr := scan.SaveScan(ms)
-	if SaveScanErr != nil {
-		log.Fatalf("Failed to save scan data: %v", SaveScanErr)
+	exists, err := scan.GetExistingHostname(ms.Hostname)
+	if err != nil {
+		log.Fatalf("Failed to check existing hostname: %v", err)
 	}
+
+	if exists {
+		log.Printf("Hostname %s already exists in the database, updating record... \n", ms.Hostname)
+		if err := scan.UpdateMachineScan(ms); err != nil {
+			log.Fatalf("Failed to update machine scan: %v", err)
+		}
+	} else {
+		fmt.Printf("Machine scan for %s does not exist. Creating new record.\n", ms.Hostname)
+		if err := scan.InsertScan(ms); err != nil {
+			log.Fatalf("Failed to insert machine scan: %v", err)
+		}
+	}
+
+	// SaveScanErr := scan.InsertScan(ms)
+	// if SaveScanErr != nil {
+	// 	log.Fatalf("Failed to save scan data: %v", SaveScanErr)
+	// }
 
 }
 
